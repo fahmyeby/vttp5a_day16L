@@ -26,18 +26,20 @@ public class BookRestController {
 
     @GetMapping("")
     public ResponseEntity<String> findAll(){
-        List<Book> books = bookService.findAll();
-        JsonArrayBuilder jsonArray = Json.createArrayBuilder();
+        List<Book> books = bookService.findAll(); // get all books from service
+        JsonArrayBuilder jsonArray = Json.createArrayBuilder(); // create json array to store books
 
+        //convert each book data to json format
         for (Book book : books){
             JsonObject jsonObj = Json.createObjectBuilder()
-            .add("id", book.getId())
+            .add("id", book.getId()) //add variables
             .add("title", book.getTitle())
             .add("author", book.getAuthor())
             .add("price", book.getPrice())
-            .add("quantity", book.getQuantity()).build();
+            .add("quantity", book.getQuantity())
+            .build(); //create json object
 
-            jsonArray.add(jsonObj);
+            jsonArray.add(jsonObj); //add json object to the array
         }
         return ResponseEntity.ok().body(jsonArray.build().toString());
     }
@@ -45,15 +47,20 @@ public class BookRestController {
     @PostMapping("/create")
     public ResponseEntity<String> create(@RequestBody String payload){
         try {
+            //convert json string to reader
             JsonReader jReader = Json.createReader(new StringReader(payload));
+            //parse json string to object
             JsonObject jObject = jReader.readObject();
 
+            //create new book and set properties from json
             Book book = new Book();
             book.setId(jObject.getInt("id"));
             book.setTitle(jObject.getString("title"));
             book.setAuthor(jObject.getString("author"));
             book.setPrice(jObject.getJsonNumber("price").doubleValue());
             book.setQuantity(jObject.getInt("quantity"));
+
+            //save book thru service
             bookService.add(book);
             return ResponseEntity.ok().body("true");
         } catch (Exception e) {

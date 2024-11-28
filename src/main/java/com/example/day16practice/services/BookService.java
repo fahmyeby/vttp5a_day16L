@@ -23,7 +23,7 @@ public class BookService {
 
     // add book
     public void add(Book book) {
-        // Convert book to JSON string
+        // convert book data to json string to store
         JsonObjectBuilder bookBuilder = Json.createObjectBuilder()
                 .add("id", book.getId())
                 .add("title", book.getTitle())
@@ -32,16 +32,19 @@ public class BookService {
                 .add("quantity", book.getQuantity());
 
         String bookJson = bookBuilder.build().toString();
+
+        //store in redis
         listRepo.rightPush(Util.BOOK_LIST_KEY, bookJson);
     }
 
     public List<Book> findAll() {
+        // retrieve all json strings from redis
         List<String> bookJsonList = listRepo.getList(Util.BOOK_LIST_KEY);
         List<Book> books = new ArrayList<>();
 
+        //convert json string back to book object
         for (String bookJson : bookJsonList) {
             try {
-                // error handling
                 if (bookJson != null && !bookJson.trim().isEmpty()) {
                     JsonReader reader = Json.createReader(new StringReader(bookJson));
                     JsonObject bookObj = reader.readObject();
