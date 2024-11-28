@@ -15,3 +15,31 @@ View Book
 3) BookService get JSON strings from redis via repo class
 4) BookService convert JSON back to Book objects
 5) Books pass to html thymeleaf
+
+Form Submission Flow (/create)
+User Input -> Form -> Controller -> Service -> Repository -> Redis
+   ↑            ↓                                             
+Validation   Validation
+
+REST API Flow
+POST
+JSON Request -> RestController -> Service -> Repository -> Redis
+     ↓              ↓             ↓
+   Parsing      Validation    Conversion
+
+GET
+Redis -> Repository -> Service -> RestController -> JSON Response
+                        ↓             ↓
+                   Processing     Formatting
+
+// List Operations
+rightPush(key, value)    // Add to end
+leftPush(key, value)     // Add to start
+range(key, start, end)   // Get range
+size(key)               // Get list size
+
+// Value Operations
+set(key, value)         // Set value
+get(key)                // Get value
+delete(key)             // Delete value
+hasKey(key)             // Check existence
